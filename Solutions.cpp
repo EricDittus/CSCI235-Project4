@@ -1,4 +1,5 @@
-#include "Maze.hpp"
+
+#include "Maze.cpp"
 #include <stack>
 #include <queue>
 #include <unordered_map>
@@ -41,33 +42,33 @@ bool canTravel(MazeNode *a_node)
 std::vector<MazeNode> solveDFS(Maze &a_maze)
 {
   std::vector<MazeNode> reVector; //vector to be constructed as the path
-  std::stack<MazeNode *> stack;
+  std::stack<MazeNode *> s;
   MazeNode *pos = a_maze.getFirstNode();
   reVector.push_back(*pos);
   while(reVector.empty() == false){
-    pos = stack.top();
+    pos = s.top();
     pos -> setVisited();
     if(pos == a_maze.getLastNode()){
       break;
     }
     if(canTravel(pos->getDirectionNode(directions::SOUTH))){
-      stack.push(pos->getDirectionNode(directions::SOUTH));
+      s.push(pos->getDirectionNode(directions::SOUTH));
       reVector.push_back(*(pos->getDirectionNode(directions::SOUTH)));
       pos->getDirectionNode(directions::SOUTH)->setVisited();
     }else if(canTravel(pos->getDirectionNode(directions::WEST))){
-      stack.push(pos -> getDirectionNode(directions::WEST));
+      s.push(pos -> getDirectionNode(directions::WEST));
       reVector.push_back(*(pos -> getDirectionNode(directions::WEST)));
       pos->getDirectionNode(directions::WEST)->setVisited();
     }else if(canTravel(pos->getDirectionNode(directions::NORTH))){
-      stack.push(pos -> getDirectionNode(directions::NORTH));
+      s.push(pos -> getDirectionNode(directions::NORTH));
       reVector.push_back(*(pos -> getDirectionNode(directions::NORTH)));
       pos->getDirectionNode(directions::NORTH)->setVisited();
     }else if(canTravel(pos->getDirectionNode(directions::EAST))){
-      stack.push(pos->getDirectionNode(directions::EAST));
+      s.push(pos->getDirectionNode(directions::EAST));
       reVector.push_back(*(pos->getDirectionNode(directions::EAST)));
       pos->getDirectionNode(directions::EAST)->setVisited();
     }else{
-      stack.pop(); //exausted options, decapitate stack
+      s.pop(); //exausted options, decapitate stack
       reVector.pop_back(); //remove last node from vector since exausted directions
     }
   }

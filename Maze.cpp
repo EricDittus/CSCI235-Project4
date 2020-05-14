@@ -2,7 +2,7 @@
 Title :       MazeNode.hpp
 Auhor :       Nigel Ferrer
 Description : implementation file of a linked-based maze
-Dependencies: Maze.cpp, MazeNode.hpp, MazeNode.cpp 
+Dependencies: Maze.cpp, MazeNode.hpp, MazeNode.cpp
 ****************************************************************************************************************************/
 
 #include "Maze.hpp"
@@ -33,7 +33,7 @@ std::pair<int, int> getPositionFromString(const std::string &str)
 }
 
 /* converts a string position to a pair
-   and creates a node at that position 
+   and creates a node at that position
    @pre: the paramater str is a string position of format (x, y)
 */
 MazeNode getNodeFromString(const std::string &str)
@@ -83,7 +83,7 @@ Maze::Maze(std::string in_file)
 
     // iterate through csv file and store all node positions and their related info
     getline(fin, line);
-    std::vector<std::vector<std::string>> node_holder;
+    std::vector<std::vector<std::string> > node_holder;
     while (getline(fin, line))
     {
         std::stringstream node_info(line);
@@ -199,8 +199,8 @@ MazeNode *Maze::contains(const std::pair<int, int> &pos)
         {
             MazeNode *reference = &x;
             return reference; /*  ensures a pointer to the actual node in the nodes_
-                                  vector is returned as opposed to a pointer that 
-                                  points to a copy of that node 
+                                  vector is returned as opposed to a pointer that
+                                  points to a copy of that node
                               */
         }
     }
