@@ -1,4 +1,5 @@
-#include "Maze.hpp"
+
+#include "Maze.cpp"
 #include <stack>
 #include <queue>
 #include <unordered_map>
@@ -30,61 +31,64 @@ bool canTravel(MazeNode *a_node)
     return true;
 }
 
-/**************TASK ONE*********************\
-/* Modify the function std::vector<MazeNode>\
-/* solveDFS(Maze & a maze) in Solutions.cpp \
-/* to implement Depth-First Search in order \
-/* to find the shortest solution to a maze. \
-/* The method should return an ordered      \
-/* vector that holds the path nodes from    \
-/* start-point to end-point.               */
+/*                TASK ONE
+  Modify the function std::vector<MazeNode>
+  solveDFS(Maze & a maze) in Solutions.cpp
+  to implement Depth-First Search in order
+  to find the shortest solution to a maze.
+  The method should return an ordered
+  vector that holds the path nodes from
+  start-point to end-point.               */
 std::vector<MazeNode> solveDFS(Maze &a_maze)
 {
   std::vector<MazeNode> reVector; //vector to be constructed as the path
-  std::stack<MazeNode *> stack;
+  std::stack<MazeNode *> s;
   MazeNode *pos = a_maze.getFirstNode();
-  reVector.push(pos);
-  while(reVector.empty() == false){
-    pos = stack.top();
-    pos -> setVisited();
+  reVector.push_back(*pos);
+  s.push(pos);
+  pos -> setVisited();
+  while(!reVector.empty()){
+    pos = s.top();
+
     if(pos == a_maze.getLastNode()){
       break;
     }
     if(canTravel(pos->getDirectionNode(directions::SOUTH))){
-      stack.push(pos->getDirectionNode(direction::SOUTH));
-      reVector.push_back(*(pos->getDirectionNode(direction::SOUTH)));
-      pos->getDirectionNode(direction::SOUTH)->setVisited();
+      reVector.push_back(*(pos->getDirectionNode(directions::SOUTH)));
+      s.push(pos->getDirectionNode(directions::SOUTH));
+      pos->getDirectionNode(directions::SOUTH)->setVisited();
     }else if(canTravel(pos->getDirectionNode(directions::WEST))){
-      stack.push(pos -> getDirectionNode(direction::WEST));
-      reVector.push_back(*(pos -> getDirectionNode(direction::WEST)));
-      pos->getDirectionNode(direction::WEST)->setVisited();
+      reVector.push_back(*(pos -> getDirectionNode(directions::WEST)));
+      s.push(pos -> getDirectionNode(directions::WEST));
+      pos->getDirectionNode(directions::WEST)->setVisited();
     }else if(canTravel(pos->getDirectionNode(directions::NORTH))){
-      stack.push(pos -> getDirectionNode(direction::NORTH));
-      reVector.push_back(*(pos -> getDirectionNode(direction::NORTH)));
-      pos->getDirectionNode(direction::NORTH)->setVisited();
+      reVector.push_back(*(pos -> getDirectionNode(directions::NORTH)));
+      s.push(pos -> getDirectionNode(directions::NORTH));
+      pos->getDirectionNode(directions::NORTH)->setVisited();
     }else if(canTravel(pos->getDirectionNode(directions::EAST))){
-      stack.push(pos->getDirectionNode(directions::EAST));
       reVector.push_back(*(pos->getDirectionNode(directions::EAST)));
-      pos->getDirectionNode(direction::EAST)->setVisited();
+      s.push(pos->getDirectionNode(directions::EAST));
+      pos->getDirectionNode(directions::EAST)->setVisited();
     }else{
-      stack.pop(); //exausted options, decapitate stack
       reVector.pop_back(); //remove last node from vector since exausted directions
+      s.pop(); //exausted options, decapitate stack
     }
   }
-  return reVector //the constructed path is returned
+  return reVector; //the constructed path is returned
 }
 
 
-/**************TASK TWO**********************\
-/* Modify the function std::vector<MazeNode> \
-/* solveBFS(Maze & a maze) in Solutions.cpp  \
-/* to implement Breadth-First Search in order\
-/* to find the shortest solution to a maze.  \
-/* The method should return an ordered       \
-/* vector that holds the path nodes from     \
-/* start-point to end-point.                */
+/*              TASK TWO
+  Modify the function std::vector<MazeNode>
+  solveBFS(Maze & a maze) in Solutions.cpp
+  to implement Breadth-First Search in order
+  to find the shortest solution to a maze.
+  The method should return an ordered
+  vector that holds the path nodes from
+  start-point to end-point.                */
 std::vector<MazeNode> solveBFS(Maze &a_maze)
 {
+  std::vector<MazeNode> path;
   //the queue
   std::queue<MazeNode *> q;
   //set node pos as the first node of the maze
@@ -94,70 +98,67 @@ std::vector<MazeNode> solveBFS(Maze &a_maze)
   //pos must be set as visited
   pos->setVisited();
   //node pos put onto the queue
-  q.enqueue(pos);
+  q.push(pos);
   //vector that will reconstruct the path
   bool neighborsNotVisited = false;
-  std::vector<MazeNode> path;
-  while(q.isEmpty() == false){
-    pos=q.dequeue();
+  while(!q.empty()){
+    pos=q.front();
     q.pop();
     for(directions::nesw dir = directions::NORTH; dir <= directions::WEST; dir = directions::nesw(dir + 1)){
-      if(canTravel(node->getDirectionNode(dir))){
+      if(canTravel(pos->getDirectionNode(dir))){
         neighborsNotVisited = true;
       }
     }
-    if(neighborsNotVisited = true){ //check if there are unvisited adjacsent nodes
-      //iterate through each direction surrounding that node
-      for(int i = 0; i <= 3; i++){
-        if(i=0 && canTravel(pos->getDirectionNode(directions::SOUTH))){
+    if(neighborsNotVisited == true){ //check if there are unvisited adjacsent nodes
+      //go through each direction surrounding that node
+        if(canTravel(pos->getDirectionNode(directions::SOUTH))){
           parents[pos->getDirectionNode(directions::SOUTH)] = pos;
           pos->getDirectionNode(directions::SOUTH)->setVisited();
           q.push(pos->getDirectionNode(directions::SOUTH));
         }
-        if(i=1 && canTravel(pos->getDirectionNode(directions::WEST))){
+        if(canTravel(pos->getDirectionNode(directions::WEST))){
           parents[pos->getDirectionNode(directions::WEST)] = pos;
           pos->getDirectionNode(directions::WEST)->setVisited();
           q.push(pos->getDirectionNode(directions::WEST));
         }
-        if(i=2 && canTravel(pos->getDirectionNode(directions::NORTH))){
+        if(canTravel(pos->getDirectionNode(directions::NORTH))){
           parents[pos->getDirectionNode(directions::NORTH)] = pos;
           pos->getDirectionNode(directions::NORTH)->setVisited();
           q.push(pos->getDirectionNode(directions::NORTH));
         }
-        if(i=3 && canTravel(pos->getDirectionNode(directions::EAST))){
+        if(canTravel(pos->getDirectionNode(directions::EAST))){
           parents[pos->getDirectionNode(directions::EAST)] = pos;
           pos->getDirectionNode(directions::EAST)->setVisited();
           q.push(pos->getDirectionNode(directions::EAST));
         }
         //the case that we have reached the end of the maze
-        if(q.front()=a_maze.getLastNode()){
+        if(q.front()==a_maze.getLastNode()){
           break;
         }
-      }
+
     }
     neighborsNotVisited = false;
   }
   //construct the path vector by backtracking through parent nodes to beginning
-  MazeNode *node = a_maze.getLastNode());
+  MazeNode *node = a_maze.getLastNode();
   while(node != a_maze.getFirstNode()){
     path.push_back(*node);
-    node = parent[node];
+    node = parents[node];
   }
   path.push_back(*a_maze.getFirstNode());
   //we need to reverse order of path, since it was set up backwards
   reverse(path.begin(),path.end());
-
   return path;
 }
 
-/***************TASK THREE**********************\
-/* Modify the function std::vector<MazeNode>  \
-/* solveDEF(Maze & a maze) in Solutions.cpp   \
-/* to implement Dead-End Filling in order to  \
-/* find the shortest solution to a maze.      \
-/* The method should return an ordered vector \
-/* that holds the path nodes from start-point \
-/* to end-point.                             */
+/*                TASK THREE
+  Modify the function std::vector<MazeNode>
+  solveDEF(Maze & a maze) in Solutions.cpp
+  to implement Dead-End Filling in order to
+  find the shortest solution to a maze.
+  The method should return an ordered vector
+  that holds the path nodes from start-point
+  to end-point.                             */
 
 /*In this function, I will be adding dead ends to a stack by
 looping through the nodes of the maze. Then, when a deadend
@@ -173,7 +174,7 @@ std::vector<MazeNode> solveDEF(Maze &a_maze)
   std::stack<MazeNode *> dead;
   MazeNode *pos;
   //loop through all nodes of the maze
-  for(auto &it: a_maze.getNodes()){
+  for(auto &it : a_maze.getNodes()){
     //make sure the node has 3 or more walls, isn't a wall, and
     //is not the end or the beginning of the maze.
     //which will define it as a dead-end
@@ -187,22 +188,22 @@ std::vector<MazeNode> solveDEF(Maze &a_maze)
        }
   }
   pos = dead.top();
-  while(!dead.isEmpty()){
+  while(!dead.empty()){
     pos = dead.top();
     dead.pop();
-    if(getNumberOfWalls(pos->getDirectionNode(direction::SOUTH)) >= 3 && canTravel(pos->getDirectionNode(direction::SOUTH))){
+    if(getNumberOfWalls(pos->getDirectionNode(directions::SOUTH)) >= 3 && canTravel(pos->getDirectionNode(directions::SOUTH))){
       pos->getDirectionNode(directions::SOUTH)->setWall();
       dead.push(pos->getDirectionNode(directions::SOUTH));
     }
-    if(getNumberOfWalls(pos->getDirectionNode(direction::WEST)) >= 3 && canTravel(pos->getDirectionNode(direction::WEST))){
+    if(getNumberOfWalls(pos->getDirectionNode(directions::WEST)) >= 3 && canTravel(pos->getDirectionNode(directions::WEST))){
       pos->getDirectionNode(directions::WEST)->setWall();
       dead.push(pos->getDirectionNode(directions::WEST));
     }
-    if(getNumberOfWalls(pos->getDirectionNode(direction::NORTH)) >= 3 && canTravel(pos->getDirectionNode(direction::NORTH))){
+    if(getNumberOfWalls(pos->getDirectionNode(directions::NORTH)) >= 3 && canTravel(pos->getDirectionNode(directions::NORTH))){
       pos->getDirectionNode(directions::NORTH)->setWall();
       dead.push(pos->getDirectionNode(directions::NORTH));
     }
-    if(getNumberOfWalls(pos->getDirectionNode(direction::EAST)) >= 3 && canTravel(pos->getDirectionNode(direction::EAST))){
+    if(getNumberOfWalls(pos->getDirectionNode(directions::EAST)) >= 3 && canTravel(pos->getDirectionNode(directions::EAST))){
       pos->getDirectionNode(directions::EAST)->setWall();
       dead.push(pos->getDirectionNode(directions::EAST));
     }
@@ -211,16 +212,16 @@ std::vector<MazeNode> solveDEF(Maze &a_maze)
   return path;
 }
 
-/***************TASK FOUR**********************\
-/* Modify the function std::vector<MazeNode>   \
-/* solveCustom(Maze & a maze) in Solutions.cpp \
-/* to implement your own shortest path finding \
-/* algorithm. This could be an optimization of \
-/* one of the algorithms you have already      \
-/* implemented, an algorithm that already      \
-/* exists, your own creation, or a combination \
-/* of any or every one element from these      \
-/* categories.                                */
+/*                TASK FOUR
+  Modify the function std::vector<MazeNode>
+  solveCustom(Maze & a maze) in Solutions.cpp
+  to implement your own shortest path finding
+  algorithm. This could be an optimization of
+  one of the algorithms you have already
+  implemented, an algorithm that already
+  exists, your own creation, or a combination
+  of any or every one element from these
+  categories.                                */
 
 /*In my custom pathfinder fuction, I will use depth first search, but using one
 stack starting at the beginning of the maze and another at the end of it, and
@@ -236,7 +237,7 @@ std::vector<MazeNode> solveCustom(Maze &a_maze)
   MazeNode *startNode = a_maze.getFirstNode();
   MazeNode *endNode = a_maze.getLastNode();
   //path begins with the starting node
-  path.push(startNode);
+  path.push_back(*startNode);
   while(!end.empty()){
     startNode = start.top();
     endNode = end.top();
@@ -244,7 +245,7 @@ std::vector<MazeNode> solveCustom(Maze &a_maze)
     endNode -> setVisited();
     for(directions::nesw dir = directions::NORTH; dir <= directions::WEST; dir = directions::nesw(dir + 1)){
       //This will function so long as a stack does not see the top of another stack
-      while((*(endNode->getDirectionNode(dir)) != start.top())||(*(startNode->getDirectionNode(dir)) != end.top())){
+      while(((endNode->getDirectionNode(dir)) != start.top())||((startNode->getDirectionNode(dir)) != end.top())){
         if(canTravel(startNode->getDirectionNode(dir))){
           start.push(startNode->getDirectionNode(dir));
           path.push_back(*(startNode->getDirectionNode(dir)));
@@ -257,17 +258,16 @@ std::vector<MazeNode> solveCustom(Maze &a_maze)
       }
       //If the top of another stack is found, this means that the path from the starting node
       //has completely added itself to the vector. Thus, we need only add the path leading to the end.
-      if((*(endNode->getDirectionNode(dir)) = start.top())||(*(startNode->getDirectionNode(dir))= end.top()){
-        path.push_back(end.top());
+      if(((endNode->getDirectionNode(dir)) == start.top())||((startNode->getDirectionNode(dir))== end.top())){
+        path.push_back(*(end.top()));
         end.pop();
       }
     }
   }
-    return path;
+  return path;
+  }
+
 }
-
-
-}// namespace solutions
 
 int main()
 {
@@ -280,3 +280,5 @@ int main()
     return 0;
 
 }
+
+// namespace solutions
