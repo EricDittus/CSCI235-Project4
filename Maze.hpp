@@ -5,12 +5,11 @@ Description : header/interface file of a linked-based maze
 Dependencies: MazeNode.hpp, MazeNode.cpp 
 ****************************************************************************************************************************/
 
-#include "MazeNode.hpp"
+#include "MazeNode.cpp"
 #include <vector>
-
+#include <random>
 #ifndef MAZE_
 #define MAZE_
-
 class Maze
 {
 private:
