@@ -45,31 +45,33 @@ std::vector<MazeNode> solveDFS(Maze &a_maze)
   std::stack<MazeNode *> s;
   MazeNode *pos = a_maze.getFirstNode();
   reVector.push_back(*pos);
-  while(reVector.empty() == false){
+  s.push(pos);
+  pos -> setVisited();
+  while(!reVector.empty()){
     pos = s.top();
-    pos -> setVisited();
+
     if(pos == a_maze.getLastNode()){
       break;
     }
     if(canTravel(pos->getDirectionNode(directions::SOUTH))){
-      s.push(pos->getDirectionNode(directions::SOUTH));
       reVector.push_back(*(pos->getDirectionNode(directions::SOUTH)));
+      s.push(pos->getDirectionNode(directions::SOUTH));
       pos->getDirectionNode(directions::SOUTH)->setVisited();
     }else if(canTravel(pos->getDirectionNode(directions::WEST))){
-      s.push(pos -> getDirectionNode(directions::WEST));
       reVector.push_back(*(pos -> getDirectionNode(directions::WEST)));
+      s.push(pos -> getDirectionNode(directions::WEST));
       pos->getDirectionNode(directions::WEST)->setVisited();
     }else if(canTravel(pos->getDirectionNode(directions::NORTH))){
-      s.push(pos -> getDirectionNode(directions::NORTH));
       reVector.push_back(*(pos -> getDirectionNode(directions::NORTH)));
+      s.push(pos -> getDirectionNode(directions::NORTH));
       pos->getDirectionNode(directions::NORTH)->setVisited();
     }else if(canTravel(pos->getDirectionNode(directions::EAST))){
-      s.push(pos->getDirectionNode(directions::EAST));
       reVector.push_back(*(pos->getDirectionNode(directions::EAST)));
+      s.push(pos->getDirectionNode(directions::EAST));
       pos->getDirectionNode(directions::EAST)->setVisited();
     }else{
-      s.pop(); //exausted options, decapitate stack
       reVector.pop_back(); //remove last node from vector since exausted directions
+      s.pop(); //exausted options, decapitate stack
     }
   }
   return reVector; //the constructed path is returned
@@ -86,6 +88,7 @@ std::vector<MazeNode> solveDFS(Maze &a_maze)
   start-point to end-point.                */
 std::vector<MazeNode> solveBFS(Maze &a_maze)
 {
+  std::vector<MazeNode> path;
   //the queue
   std::queue<MazeNode *> q;
   //set node pos as the first node of the maze
@@ -98,7 +101,6 @@ std::vector<MazeNode> solveBFS(Maze &a_maze)
   q.push(pos);
   //vector that will reconstruct the path
   bool neighborsNotVisited = false;
-  std::vector<MazeNode> path;
   while(!q.empty()){
     pos=q.front();
     q.pop();
@@ -146,7 +148,6 @@ std::vector<MazeNode> solveBFS(Maze &a_maze)
   path.push_back(*a_maze.getFirstNode());
   //we need to reverse order of path, since it was set up backwards
   reverse(path.begin(),path.end());
-
   return path;
 }
 
