@@ -90,7 +90,7 @@ std::vector<MazeNode> solveBFS(Maze &a_maze)
 {
   std::vector<MazeNode> path;
   //the queue
-  std::queue<MazeNode *> q;
+  std::queue<MazeNode *> que;
   //set node pos as the first node of the maze
   MazeNode *pos = a_maze.getFirstNode();
   //this will keep track of the parent nodes
@@ -98,12 +98,12 @@ std::vector<MazeNode> solveBFS(Maze &a_maze)
   //pos must be set as visited
   pos->setVisited();
   //node pos put onto the queue
-  q.push(pos);
+  que.push(pos);
   //vector that will reconstruct the path
   bool neighborsNotVisited = false;
-  while(!q.empty()){
-    pos=q.front();
-    q.pop();
+  while(!que.empty()){
+    pos=que.front();
+    que.pop();
     for(directions::nesw dir = directions::NORTH; dir <= directions::WEST; dir = directions::nesw(dir + 1)){
       if(canTravel(pos->getDirectionNode(dir))){
         neighborsNotVisited = true;
@@ -111,31 +111,19 @@ std::vector<MazeNode> solveBFS(Maze &a_maze)
     }
     if(neighborsNotVisited == true){ //check if there are unvisited adjacsent nodes
       //go through each direction surrounding that node
-        if(canTravel(pos->getDirectionNode(directions::SOUTH))){
-          parents[pos->getDirectionNode(directions::SOUTH)] = pos;
-          pos->getDirectionNode(directions::SOUTH)->setVisited();
-          q.push(pos->getDirectionNode(directions::SOUTH));
-        }
-        if(canTravel(pos->getDirectionNode(directions::WEST))){
-          parents[pos->getDirectionNode(directions::WEST)] = pos;
-          pos->getDirectionNode(directions::WEST)->setVisited();
-          q.push(pos->getDirectionNode(directions::WEST));
-        }
-        if(canTravel(pos->getDirectionNode(directions::NORTH))){
-          parents[pos->getDirectionNode(directions::NORTH)] = pos;
-          pos->getDirectionNode(directions::NORTH)->setVisited();
-          q.push(pos->getDirectionNode(directions::NORTH));
-        }
-        if(canTravel(pos->getDirectionNode(directions::EAST))){
-          parents[pos->getDirectionNode(directions::EAST)] = pos;
-          pos->getDirectionNode(directions::EAST)->setVisited();
-          q.push(pos->getDirectionNode(directions::EAST));
-        }
-        //the case that we have reached the end of the maze
-        if(q.front()==a_maze.getLastNode()){
-          break;
-        }
-
+      for(directions::nesw dir = directions::NORTH; dir <= directions::WEST; dir = directions::nesw(dir + 1))
+          {
+              if(canTravel(pos->getDirectionNode(dir)))
+              {
+                  pos->getDirectionNode(dir)->setVisited();
+                  parents[pos->getDirectionNode(dir)] = pos;
+                  que.push(pos->getDirectionNode(dir));
+              }
+              if(que.front() == a_maze.getLastNode())
+              {
+                  break;
+              }
+          }
     }
     neighborsNotVisited = false;
   }
@@ -172,22 +160,21 @@ std::vector<MazeNode> solveDEF(Maze &a_maze)
 
   std::vector<MazeNode> path;
   std::stack<MazeNode *> dead;
-  MazeNode *pos;
   //loop through all nodes of the maze
-  for(auto &it : a_maze.getNodes()){
+  for(auto &loop : a_maze.getNodes()){
     //make sure the node has 3 or more walls, isn't a wall, and
     //is not the end or the beginning of the maze.
     //which will define it as a dead-end
-    if(getNumberOfWalls(&it)>=3 && it.isWall()==false
-       && a_maze.getLastNode()->getStrPos() != it.getStrPos()
-       && a_maze.getFirstNode()->getStrPos() != it.getStrPos()){
+    if(getNumberOfWalls(&loop)>=3 && loop.isWall()==false
+       && a_maze.getLastNode()->getStrPos() != loop.getStrPos()
+       && a_maze.getFirstNode()->getStrPos() != loop.getStrPos()){
          //put the deadend on the dead stack
-         dead.push(a_maze.contains(it.getPos()));
+         dead.push(a_maze.contains(loop.getPos()));
          //set the dead end to visited
-         a_maze.contains(it.getPos())->setVisited();
+         a_maze.contains(loop.getPos())->setVisited();
        }
   }
-  pos = dead.top();
+  MazeNode *pos = dead.top();
   while(!dead.empty()){
     pos = dead.top();
     dead.pop();
